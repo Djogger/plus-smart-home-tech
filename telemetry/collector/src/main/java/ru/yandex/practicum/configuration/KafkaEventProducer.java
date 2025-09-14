@@ -13,8 +13,8 @@ import ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer;
 import java.util.Properties;
 
 @Component
-public class KafkaEventProducer {
-    private final Producer<String, SpecificRecordBase> producer;
+public class KafkaEventProducer<T extends SpecificRecordBase> {
+    private final Producer<String, T> producer;
 
     public KafkaEventProducer() {
         Properties config = new Properties();
@@ -26,8 +26,8 @@ public class KafkaEventProducer {
         producer = new KafkaProducer<>(config);
     }
 
-    public void send(String topic, SpecificRecordBase event) {
-        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, null, event);
+    public void send(String topic, T event) {
+        ProducerRecord<String, T> record = new ProducerRecord<>(topic, null, event);
         producer.send(record);
     }
 
