@@ -1,24 +1,22 @@
 package ru.yandex.practicum.configuration;
 
 import jakarta.annotation.PreDestroy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.kafka.serializer.GeneralAvroSerializer;
 
 import java.time.Duration;
 import java.util.Properties;
-import org.slf4j.Logger;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+@Slf4j
 @Component
 public class KafkaEventProducer {
     private final Producer<String, SpecificRecordBase> producer;
-    private static final Logger logger = LoggerFactory.getLogger(KafkaEventProducer.class);
 
     public KafkaEventProducer() {
         Properties config = new Properties();
@@ -31,9 +29,22 @@ public class KafkaEventProducer {
     }
 
     public void send(String topic, SpecificRecordBase event) {
-        logger.info("Отправляем в Kafka событие: {}", event);
+        if (event == null) {
+            return;
+        }
+
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, null, event);
-        producer.send(record);
+
+        Future<RecordMetadata> futureResult = producer.send(record);
+        producer.flush();
+
+        try {
+            RecordMetadata metadata = futureResult.get();
+            log.info("Событие {} успешно записано в топик {} в партицию {} со смещением {}",
+                    record, metadata.topic(), metadata.partition(), metadata.offset());
+        } catch (InterruptedException | ExecutionException ex) {
+            log.warn("Не удалось записать событие ", ex);
+        }
     }
 
     @PreDestroy

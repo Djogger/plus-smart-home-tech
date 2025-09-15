@@ -49,7 +49,7 @@ protocol HubEventProtocol {
 	record DeviceActionAvro {
 		string sensor_id;
 		ActionTypeAvro type;
-		int? value = null;
+		int? value;
 	}
 
 	record ScenarioAddedEventAvro {
