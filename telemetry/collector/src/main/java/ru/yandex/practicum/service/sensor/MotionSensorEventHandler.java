@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.sensor.SensorEvent;
 
 @Component
 public class MotionSensorEventHandler extends BaseSensorEventHandler<MotionSensorAvro> {
-    public MotionSensorEventHandler(KafkaEventProducer<MotionSensorAvro> producer) {super(producer);}
+    public MotionSensorEventHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public SensorEventType getMessageType() {

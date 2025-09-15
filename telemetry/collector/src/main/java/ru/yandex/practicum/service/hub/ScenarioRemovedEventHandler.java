@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.hub.ScenarioRemovedEvent;
 
 @Component
 public class ScenarioRemovedEventHandler extends BaseHubHandler<ScenarioRemovedEventAvro> {
-    public ScenarioRemovedEventHandler(KafkaEventProducer<ScenarioRemovedEventAvro> producer) {
+    public ScenarioRemovedEventHandler(KafkaEventProducer producer) {
         super(producer);
     }
 

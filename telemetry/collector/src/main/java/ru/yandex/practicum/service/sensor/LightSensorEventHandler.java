@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.sensor.SensorEvent;
 
 @Component
 public class LightSensorEventHandler extends BaseSensorEventHandler<LightSensorAvro> {
-    public LightSensorEventHandler(KafkaEventProducer<LightSensorAvro> producer) {super(producer);}
+    public LightSensorEventHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public SensorEventType getMessageType() {

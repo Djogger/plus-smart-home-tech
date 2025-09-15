@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.sensor.TemperatureSensorEvent;
 
 @Component
 public class TemperatureSensorEventHandler extends BaseSensorEventHandler<TemperatureSensorAvro> {
-    public TemperatureSensorEventHandler(KafkaEventProducer<TemperatureSensorAvro> producer) {super(producer);}
+    public TemperatureSensorEventHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public SensorEventType getMessageType() {

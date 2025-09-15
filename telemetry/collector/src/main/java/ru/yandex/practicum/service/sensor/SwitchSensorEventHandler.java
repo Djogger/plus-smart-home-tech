@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.sensor.SwitchSensorEvent;
 
 @Component
 public class SwitchSensorEventHandler extends BaseSensorEventHandler<SwitchSensorAvro> {
-    public SwitchSensorEventHandler(KafkaEventProducer<SwitchSensorAvro> producer) {super(producer);}
+    public SwitchSensorEventHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public SensorEventType getMessageType() {

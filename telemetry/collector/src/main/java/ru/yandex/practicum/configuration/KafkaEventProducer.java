@@ -16,8 +16,8 @@ import java.util.Properties;
 import org.slf4j.Logger;
 
 @Component
-public class KafkaEventProducer<T extends SpecificRecordBase> {
-    private final Producer<String, T> producer;
+public class KafkaEventProducer {
+    private final Producer<String, SpecificRecordBase> producer;
     private static final Logger logger = LoggerFactory.getLogger(KafkaEventProducer.class);
 
     public KafkaEventProducer() {
@@ -30,9 +30,9 @@ public class KafkaEventProducer<T extends SpecificRecordBase> {
         producer = new KafkaProducer<>(config);
     }
 
-    public void send(String topic, T event) {
+    public void send(String topic, SpecificRecordBase event) {
         logger.info("Отправляем в Kafka событие: {}", event);
-        ProducerRecord<String, T> record = new ProducerRecord<>(topic, null, event);
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, null, event);
         producer.send(record);
     }
 

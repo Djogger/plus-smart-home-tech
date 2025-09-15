@@ -5,9 +5,9 @@ import ru.yandex.practicum.configuration.KafkaEventProducer;
 import ru.yandex.practicum.model.sensor.SensorEvent;
 
 public abstract class BaseSensorEventHandler<T extends SpecificRecordBase> implements SensorEventHandler {
-    protected final KafkaEventProducer<T> producer;
+    protected final KafkaEventProducer producer;
 
-    public BaseSensorEventHandler(KafkaEventProducer<T> producer) {
+    public BaseSensorEventHandler(KafkaEventProducer producer) {
         this.producer = producer;
     }
 

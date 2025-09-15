@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.sensor.SensorEvent;
 
 @Component
 public class ClimateSensorEventHandler extends BaseSensorEventHandler<ClimateSensorAvro> {
-    public ClimateSensorEventHandler(KafkaEventProducer<ClimateSensorAvro> producer) {super(producer);}
+    public ClimateSensorEventHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public SensorEventType getMessageType() {

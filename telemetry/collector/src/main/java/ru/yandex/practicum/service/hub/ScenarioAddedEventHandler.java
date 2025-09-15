@@ -14,7 +14,7 @@ public class ScenarioAddedEventHandler extends BaseHubHandler<ScenarioAddedEvent
     private final DeviceActionMapper deviceMapper;
     private final ScenarioConditionMapper scenarioMapper;
 
-    public ScenarioAddedEventHandler(KafkaEventProducer<ScenarioAddedEventAvro> producer, DeviceActionMapper deviceMapper, ScenarioConditionMapper scenarioMapper) {
+    public ScenarioAddedEventHandler(KafkaEventProducer producer, DeviceActionMapper deviceMapper, ScenarioConditionMapper scenarioMapper) {
         super(producer);
         this.deviceMapper = deviceMapper;
         this.scenarioMapper = scenarioMapper;

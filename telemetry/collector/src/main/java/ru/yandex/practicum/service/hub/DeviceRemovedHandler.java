@@ -9,7 +9,7 @@ import ru.yandex.practicum.model.hub.HubEvent;
 
 @Component
 public class DeviceRemovedHandler extends BaseHubHandler<DeviceRemovedEventAvro> {
-    public DeviceRemovedHandler(KafkaEventProducer<DeviceRemovedEventAvro> producer) {super(producer);}
+    public DeviceRemovedHandler(KafkaEventProducer producer) {super(producer);}
 
     @Override
     public HubEventType getMessageType() {
