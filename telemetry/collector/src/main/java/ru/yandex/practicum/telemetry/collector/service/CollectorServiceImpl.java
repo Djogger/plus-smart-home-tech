@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CollectorServiceImpl implements CollectorService {
-    @Value("${collector.kafka.producer.topics.sensors-events}")
+    @Value("${collector.kafka.topics.sensors-events}")
     private String sensorsEventsTopic;
-    @Value("${collector.kafka.producer.topics.hubs-events}")
+    @Value("${collector.kafka.topics.hubs-events}")
     private String hubsEventsTopic;
 
     private final KafkaClient kafkaClient;
