@@ -2,19 +2,18 @@ package ru.yandex.practicum.telemetry.collector.mapper.hub;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.ScenarioRemovedEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
-import ru.yandex.practicum.telemetry.collector.model.hub.HubEvent;
-import ru.yandex.practicum.telemetry.collector.model.hub.ScenarioRemovedEvent;
-import ru.yandex.practicum.telemetry.collector.model.hub.enums.HubEventType;
 
 @Slf4j
 @Component
 public class ScenarioRemovedEventMapper extends BaseHubEventMapper<ScenarioRemovedEventAvro> {
     @Override
-    protected ScenarioRemovedEventAvro mapToAvroPayload(HubEvent event) {
-        ScenarioRemovedEvent hubEvent = (ScenarioRemovedEvent) event;
+    protected ScenarioRemovedEventAvro mapToAvroPayload(HubEventProto event) {
+        ScenarioRemovedEventProto hubEvent = event.getScenarioRemoved();
 
-        log.info("Маппинг события {} - результат: {}", ScenarioRemovedEvent.class.getSimpleName(), hubEvent);
+        log.info("Маппинг события {} - результат: {}", ScenarioRemovedEventProto.class.getSimpleName(), hubEvent);
 
         return ScenarioRemovedEventAvro.newBuilder()
                 .setName(hubEvent.getName())
@@ -22,7 +21,7 @@ public class ScenarioRemovedEventMapper extends BaseHubEventMapper<ScenarioRemov
     }
 
     @Override
-    public HubEventType getHubEventType() {
-        return HubEventType.SCENARIO_REMOVED;
+    public HubEventProto.PayloadCase getHubEventType() {
+        return HubEventProto.PayloadCase.SCENARIO_REMOVED;
     }
 }
