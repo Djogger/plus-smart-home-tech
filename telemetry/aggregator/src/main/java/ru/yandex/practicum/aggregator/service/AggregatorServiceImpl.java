@@ -43,8 +43,6 @@ public class AggregatorServiceImpl implements AggregatorService {
             SensorsSnapshotAvro snapshot = new SensorsSnapshotAvro();
             snapshot.setSensorsState(new HashMap<>());
             snapshots.put(event.getHubId(), snapshot);
-
-            return Optional.empty();
         }
 
         SensorsSnapshotAvro snapshot = snapshots.get(event.getHubId());
