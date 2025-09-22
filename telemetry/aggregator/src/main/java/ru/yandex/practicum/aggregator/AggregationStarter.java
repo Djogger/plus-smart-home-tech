@@ -18,7 +18,6 @@ import java.util.List;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class AggregationStarter {
     private final AggregatorService aggregatorService;
     private final Producer<String, SpecificRecordBase> producer;
