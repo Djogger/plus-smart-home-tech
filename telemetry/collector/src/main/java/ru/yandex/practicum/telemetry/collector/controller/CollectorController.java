@@ -33,8 +33,20 @@ public class CollectorController extends CollectorControllerImplBase {
     }
 
     @Override
-    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserve) {
-        service.collectHubEvent(request);
+    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            log.info("New hub message in collector from hub router: {}", request);
+            service.collectHubEvent(request);
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            log.info("Error when take new hub message in collector from hub router: {}", e.getMessage());
+            responseObserver.onError(new StatusRuntimeException(
+                    Status.INTERNAL
+                            .withDescription(e.getLocalizedMessage())
+                            .withCause(e)
+            ));
+        }
     }
 
 }
