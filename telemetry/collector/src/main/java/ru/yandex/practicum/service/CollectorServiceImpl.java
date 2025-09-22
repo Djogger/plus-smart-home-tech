@@ -1,15 +1,15 @@
-package ru.yandex.practicum.telemetry.collector.service;
+package ru.yandex.practicum.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
+import ru.yandex.practicum.kafka.KafkaClient;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.telemetry.collector.kafka.KafkaClient;
-import ru.yandex.practicum.telemetry.collector.mapper.hub.HubEventMapper;
-import ru.yandex.practicum.telemetry.collector.mapper.sensor.SensorEventMapper;
+import ru.yandex.practicum.mapper.hub.HubEventMapper;
+import ru.yandex.practicum.mapper.sensor.SensorEventMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CollectorServiceImpl implements CollectorService {
-    @Value("${collector.kafka.topics.sensors-events}")
+    @Value("${collector.kafka.producer.topics.sensors-events}")
     private String sensorsEventsTopic;
-    @Value("${collector.kafka.topics.hubs-events}")
+    @Value("${collector.kafka.producer.topics.hubs-events}")
     private String hubsEventsTopic;
 
     private final KafkaClient kafkaClient;
@@ -43,7 +43,6 @@ public class CollectorServiceImpl implements CollectorService {
     @Override
     public void collectSensorEvent(SensorEventProto event) {
         SensorEventMapper eventMapper;
-
         if (sensorEventMappers.containsKey(event.getPayloadCase())) {
             eventMapper = sensorEventMappers.get(event.getPayloadCase());
         } else {

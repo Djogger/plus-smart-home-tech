@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.mapper.hub;
+package ru.yandex.practicum.mapper.hub;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -21,7 +21,6 @@ public abstract class BaseHubEventMapper<T extends SpecificRecordBase> implement
         T payload = mapToAvroPayload(event);
 
         log.info("Создание {}", HubEventAvro.class.getSimpleName());
-
         return HubEventAvro.newBuilder()
                 .setHubId(event.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.kafka;
+package ru.yandex.practicum.kafka;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;

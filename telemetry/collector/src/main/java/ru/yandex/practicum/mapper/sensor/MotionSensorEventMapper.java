@@ -1,8 +1,8 @@
-package ru.yandex.practicum.telemetry.collector.mapper.sensor;
+package ru.yandex.practicum.mapper.sensor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.grpc.telemetry.event.MotionSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.MotionSensorEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 
@@ -11,9 +11,9 @@ import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
 public class MotionSensorEventMapper extends BaseSensorEventMapper<MotionSensorAvro> {
     @Override
     protected MotionSensorAvro mapToAvroPayload(SensorEventProto event) {
-        MotionSensorProto sensorEvent = event.getMotionSensorEvent();
+        MotionSensorEventProto sensorEvent = event.getMotionSensorEvent();
 
-        log.info("Маппинг события {} - результат: {}", MotionSensorProto.class.getSimpleName(), sensorEvent);
+        log.info("Маппинг события {} - результат: {}", MotionSensorEventProto.class.getSimpleName(), sensorEvent);
 
         return MotionSensorAvro.newBuilder()
                 .setLinkQuality(sensorEvent.getLinkQuality())

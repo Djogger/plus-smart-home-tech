@@ -1,8 +1,8 @@
-package ru.yandex.practicum.telemetry.collector.mapper.sensor;
+package ru.yandex.practicum.mapper.sensor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.grpc.telemetry.event.LightSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.LightSensorEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
 
@@ -11,13 +11,13 @@ import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
 public class LightSensorEventMapper extends BaseSensorEventMapper<LightSensorAvro> {
     @Override
     protected LightSensorAvro mapToAvroPayload(SensorEventProto event) {
-        LightSensorProto sensorEvent = event.getLightSensorEvent();
+        LightSensorEventProto sensorEvent = event.getLightSensorEvent();
 
-        log.info("Маппинг события {} - результат: {}", LightSensorProto.class.getSimpleName(), sensorEvent);
+        log.info("Маппинг события {} - результат: {}", LightSensorEventProto.class.getSimpleName(), sensorEvent);
 
         return LightSensorAvro.newBuilder()
                 .setLinkQuality(sensorEvent.getLinkQuality())
-                .setLuminosityl(sensorEvent.getLuminosity())
+                .setLuminosity(sensorEvent.getLuminosity())
                 .build();
     }
 

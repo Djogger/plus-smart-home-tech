@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.kafka;
+package ru.yandex.practicum.kafka;
 
 import org.apache.avro.specific.SpecificRecordBase;
 

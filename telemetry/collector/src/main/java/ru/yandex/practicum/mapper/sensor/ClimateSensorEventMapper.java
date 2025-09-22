@@ -1,8 +1,8 @@
-package ru.yandex.practicum.telemetry.collector.mapper.sensor;
+package ru.yandex.practicum.mapper.sensor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 
@@ -11,9 +11,9 @@ import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
 public class ClimateSensorEventMapper extends BaseSensorEventMapper<ClimateSensorAvro> {
     @Override
     protected ClimateSensorAvro mapToAvroPayload(SensorEventProto event) {
-        ClimateSensorProto sensorEvent = event.getClimateSensorEvent();
+        ClimateSensorEventProto sensorEvent = event.getClimateSensorEvent();
 
-        log.info("Маппинг события {} - результат: {}", ClimateSensorProto.class.getSimpleName(), sensorEvent);
+        log.info("Маппинг события {} - результат: {}", ClimateSensorEventProto.class.getSimpleName(), sensorEvent);
 
         return ClimateSensorAvro.newBuilder()
                 .setTemperatureC(sensorEvent.getTemperatureC())

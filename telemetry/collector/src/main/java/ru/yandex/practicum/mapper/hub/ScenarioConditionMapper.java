@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.mapper.hub;
+package ru.yandex.practicum.mapper.hub;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.ScenarioConditionProto;
@@ -11,11 +11,18 @@ import java.util.List;
 @Component
 public class ScenarioConditionMapper {
     public ScenarioConditionAvro mapToAvro(ScenarioConditionProto condition) {
+        Object value = null;
+        if (condition.getValueCase() == ScenarioConditionProto.ValueCase.INT_VALUE) {
+            value = condition.getIntValue();
+        }
+        if (condition.getValueCase() == ScenarioConditionProto.ValueCase.BOOL_VALUE) {
+            value = condition.getBoolValue();
+        }
         return ScenarioConditionAvro.newBuilder()
                 .setSensorId(condition.getSensorId())
                 .setType(ConditionTypeAvro.valueOf(condition.getType().name()))
                 .setOperation(ConditionOperationAvro.valueOf(condition.getOperation().name()))
-                .setValue(condition.getValueCase())
+                .setValue(value)
                 .build();
     }
 

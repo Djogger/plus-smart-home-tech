@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.collector.mapper.hub;
+package ru.yandex.practicum.mapper.hub;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
