@@ -15,7 +15,7 @@ collector:
           client.id: analyzerHubConsumer
           group.id: analyzer-hub
           key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-          value.deserializer: deserializer.HubEventDeserializer
+          value.deserializer: org.apache.kafka.common.deserializer.HubEventDeserializer
           enable.auto.commit: false
       snapshot:
         properties:
@@ -23,7 +23,7 @@ collector:
           client.id: analyzerSnapshotConsumer
           group.id: analyzer-snapshot
           key.deserializer: org.apache.kafka.common.serialization.StringDeserializer
-          value.deserializer: deserializer.SnapshotEventDeserializer
+          value.deserializer: org.apache.kafka.common.deserializer.SnapshotEventDeserializer
           enable.auto.commit: false
     topics:
       hubs-events: telemetry.hubs.v1
