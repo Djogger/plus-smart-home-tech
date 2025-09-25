@@ -47,7 +47,7 @@ public class AggregationStarter {
                 consumer.commitAsync();
             }
         } catch (WakeupException ignored) {
-
+            log.info("Поймана WakeupException - остановка цикла Aggregation");
         } catch (Exception e) {
             log.error("Произошла ошибка обработки данных от датчика в агрегаторе", e);
         } finally {

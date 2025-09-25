@@ -58,7 +58,7 @@ public class SnapshotProcessor {
                 }
             }
         } catch (WakeupException ignored) {
-
+            log.info("Поймана WakeupException - остановка цикла SnapshotProcessor");
         } catch (Exception e) {
             log.error("Произошла ошибка обработки данных Снапшота}", e);
         } finally {

@@ -75,7 +75,7 @@ public class HubEventProcessor implements Runnable {
                 }
             }
         } catch (WakeupException ignored) {
-
+            log.info("Поймана WakeupException - остановка цикла HubEventProcessor");
         } catch (Exception e) {
             log.error("Произошла ошибка обработки данных от Хаба}", e);
         } finally {
