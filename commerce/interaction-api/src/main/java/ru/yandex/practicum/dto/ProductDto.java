@@ -15,7 +15,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class ProductDto {
     private UUID productId;
 
@@ -33,12 +32,12 @@ public class ProductDto {
     @NotNull
     private ProductState productState;
 
+    @Min(1)
+    @Max(5)
+    private Integer rating;
+
     private ProductCategory productCategory;
 
     @NotNull
-    private double price;
-
-    @Min(1)
-    @Max(5)
-    private int rating;
+    private Double price;
 }

@@ -9,5 +9,4 @@ public class Address {
 
     public static final String CURRENT_ADDRESS =
             ADDRESSES[Random.from(new SecureRandom()).nextInt(0, 1)];
-
 }

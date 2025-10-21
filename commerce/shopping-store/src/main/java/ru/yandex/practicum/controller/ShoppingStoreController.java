@@ -14,8 +14,8 @@ import ru.yandex.practicum.service.ShoppingStoreService;
 import java.util.UUID;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/shopping-store")
+@RequiredArgsConstructor
 public class ShoppingStoreController {
     private final ShoppingStoreService shoppingStoreService;
 
@@ -26,7 +26,7 @@ public class ShoppingStoreController {
 
     @PostMapping
     public ProductDto updateProduct(@RequestBody @Valid ProductDto productDto) {
-        return  shoppingStoreService.updateProduct(productDto);
+        return shoppingStoreService.updateProduct(productDto);
     }
 
     @PostMapping("/removeProductFromStore")
@@ -35,12 +35,14 @@ public class ShoppingStoreController {
     }
 
     @PostMapping("/quantityState")
-    public Boolean setProductQuantityState(@RequestBody @Valid SetProductQuantityStateRequest productQuantityStateRequest) {
-        return shoppingStoreService.setProductQuantityState(productQuantityStateRequest);
+    public Boolean setProductQuantityState(@Valid SetProductQuantityStateRequest setProductQuantityStateRequest) {
+        return shoppingStoreService.setProductQuantityState(setProductQuantityStateRequest);
     }
 
     @GetMapping
-    public Page<ProductDto> getProducts(@RequestParam(name = "category") ProductCategory productCategory, Pageable pageable) {
+    public Page<ProductDto> getProducts(@RequestParam(name = "category") ProductCategory productCategory,
+                                        Pageable pageable) {
+
         return shoppingStoreService.getProducts(productCategory, pageable);
     }
 

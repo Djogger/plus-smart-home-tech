@@ -26,5 +26,4 @@ public interface ShoppingCartClient {
 
     @DeleteMapping("/api/v1/shopping-cart")
     void deactivateCurrentShoppingCart(@RequestParam @NotBlank String username);
-
 }

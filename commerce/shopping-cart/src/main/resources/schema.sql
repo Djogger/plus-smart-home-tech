@@ -1,14 +1,14 @@
-DROP TABLE IF EXISTS shopping_cart_items;
-DROP TABLE IF EXISTS shopping_cart;
+drop table if exists shopping_cart, shopping_cart_items;
 
-CREATE TABLE IF NOT EXISTS shopping_cart (
-    shopping_cart_id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    username VARCHAR(255) NOT NULL,
-    cart_state VARCHAR(255)
+create table if not exists shopping_cart (
+    shopping_cart_id uuid default gen_random_uuid() primary key,
+    username varchar(255) not null,
+    cart_state varchar(100)
 );
 
-CREATE TABLE IF NOT EXISTS shopping_cart_items (
-    product_id uuid NOT NULL,
-    quantity INTEGER,
-    cart_id uuid REFERENCES shopping_cart (shopping_cart_id) ON DELETE CASCADE
-)
+create table if not exists shopping_cart_items (
+    product_id uuid not null,
+    quantity integer,
+    cart_id uuid references shopping_cart (shopping_cart_id) on delete cascade
+);
+

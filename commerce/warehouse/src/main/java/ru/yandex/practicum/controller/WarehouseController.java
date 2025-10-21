@@ -1,7 +1,7 @@
 package ru.yandex.practicum.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
@@ -11,14 +11,14 @@ import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 import ru.yandex.practicum.service.WarehouseService;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/v1/warehouse")
+@RequiredArgsConstructor
 public class WarehouseController {
     private final WarehouseService warehouseService;
 
     @PutMapping
-    public void newProductInWarehouse(@RequestBody @Valid NewProductInWarehouseRequest request) {
-        warehouseService.newProductInWarehouse(request);
+    public void newProductInWarehouse(@RequestBody @Valid NewProductInWarehouseRequest requestDto) {
+        warehouseService.newProductInWarehouse(requestDto);
     }
 
     @PostMapping("/check")
@@ -27,8 +27,8 @@ public class WarehouseController {
     }
 
     @PostMapping("/add")
-    public void addProductToWarehouse(@RequestBody @Valid AddProductToWarehouseRequest request) {
-        warehouseService.addProductToWarehouse(request);
+    public void addProductToWarehouse(@RequestBody @Valid AddProductToWarehouseRequest requestDto) {
+        warehouseService.addProductToWarehouse(requestDto);
     }
 
     @GetMapping("/address")

@@ -1,22 +1,26 @@
 package ru.yandex.practicum.service;
 
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.enums.QuantityState;
-import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
-import ru.yandex.practicum.exception.ProductAlreadyInWarehouseException;
-import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouseException;
-import ru.yandex.practicum.exception.ProductNotFoundInWarehouseException;
 import ru.yandex.practicum.feign.ShoppingStoreClient;
-import ru.yandex.practicum.mapper.WarehouseMapper;
-import ru.yandex.practicum.model.Address;
-import ru.yandex.practicum.model.Warehouse;
-import ru.yandex.practicum.repository.WarehouseRepository;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
+import ru.yandex.practicum.model.Address;
+import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
+import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouseException;
+import ru.yandex.practicum.exception.ProductNotFoundInWarehouseException;
+import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
+import ru.yandex.practicum.mapper.WarehouseMapper;
+import ru.yandex.practicum.model.Warehouse;
+import ru.yandex.practicum.repository.WarehouseRepository;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,8 +29,10 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional(isolation = Isolation.READ_COMMITTED)
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseMapper warehouseMapper;
@@ -35,43 +41,34 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public void newProductInWarehouse(NewProductInWarehouseRequest newProductInWarehouseRequest) {
         warehouseRepository.findById(newProductInWarehouseRequest.getProductId()).ifPresent(warehouse -> {
-            throw new ProductAlreadyInWarehouseException("Дублирование описания товара на складе.");
+            throw new SpecifiedProductAlreadyInWarehouseException("Товар с таким описанием уже зарегистрирован.");
         });
-
+        
         Warehouse warehouse = warehouseMapper.toWarehouse(newProductInWarehouseRequest);
         warehouseRepository.save(warehouse);
-    }
-
-    @Override
-    public void addProductToWarehouse(AddProductToWarehouseRequest addProductToWarehouseRequest) {
-        Warehouse warehouse = warehouseRepository.findById(addProductToWarehouseRequest.getProductId()).orElseThrow(
-                () -> new NoSpecifiedProductInWarehouseException("Отсутствует информация о товаре.")
-        );
-
-        warehouse.setQuantity(warehouse.getQuantity() + addProductToWarehouseRequest.getQuantity());
-        updateProductQuantityInShoppingStore(warehouse);
+        warehouseRepository.flush();
     }
 
     public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto shoppingCartDto) {
         Map<UUID, Integer> products = shoppingCartDto.getProducts();
         Set<UUID> cartProductIds = products.keySet();
-
+        
         Map<UUID, Warehouse> warehouseProducts = warehouseRepository.findAllById(cartProductIds)
                 .stream()
                 .collect(Collectors.toMap(Warehouse::getProductId, Function.identity()));
 
         Set<UUID> productIds = warehouseProducts.keySet();
-
+        
         cartProductIds.forEach(id -> {
             if (!productIds.contains(id)) {
-                throw new ProductNotFoundInWarehouseException("Товар отсутствует на складе.");
+                throw new ProductNotFoundInWarehouseException("Товар не найден на складе.");
             }
         });
 
         products.forEach((key, value) -> {
             if (warehouseProducts.get(key).getQuantity() < value) {
                 throw new ProductInShoppingCartLowQuantityInWarehouseException(
-                        "На складе недостаточно товара.");
+                        "На складе малое количество товаров");
             }
         });
 
@@ -79,15 +76,32 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    public void addProductToWarehouse(AddProductToWarehouseRequest addProductToWarehouseRequest) {
+        Warehouse warehouse = warehouseRepository.findById(addProductToWarehouseRequest.getProductId()).orElseThrow(
+                () -> new NoSpecifiedProductInWarehouseException("Информации о товаре отсутствует.")
+        );
+
+        warehouse.setQuantity(warehouse.getQuantity() + addProductToWarehouseRequest.getQuantity());
+        updateProductQuantityInShoppingStore(warehouse);
+    }
+
+    @Override
     public AddressDto getAddress() {
         String address = Address.CURRENT_ADDRESS;
-
         return AddressDto.builder()
                 .country(address)
                 .city(address)
                 .street(address)
                 .house(address)
                 .flat(address)
+                .build();
+    }
+
+    private BookedProductsDto getBookedProducts(Collection<Warehouse> productList, Map<UUID, Integer> cartProducts) {
+        return BookedProductsDto.builder()
+                .fragile(productList.stream().anyMatch(Warehouse::getFragile))
+                .deliveryWeight(calculateTotalWeight(productList, cartProducts))
+                .deliveryVolume(calculateTotalVolume(productList, cartProducts))
                 .build();
     }
 
@@ -127,14 +141,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         shoppingStoreClient.setProductQuantityState(productId, quantityState);
     }
 
-    private BookedProductsDto getBookedProducts(Collection<Warehouse> productList, Map<UUID, Integer> cartProducts) {
-        return BookedProductsDto.builder()
-                .fragile(productList.stream().anyMatch(Warehouse::getFragile))
-                .deliveryWeight(calculateTotalWeight(productList, cartProducts))
-                .deliveryVolume(calculateTotalVolume(productList, cartProducts))
-                .build();
-    }
-
     private double getValue(Double value) {
         return value != null ? value : 0.0;
     }
@@ -146,5 +152,5 @@ public class WarehouseServiceImpl implements WarehouseService {
     private double multiply(Double value, int multiplier) {
         return value != null ? value * multiplier : 0;
     }
-
+    
 }

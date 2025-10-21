@@ -1,13 +1,14 @@
 package ru.yandex.practicum.request;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import ru.yandex.practicum.enums.QuantityState;
 
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 public class SetProductQuantityStateRequest {
     @NotNull

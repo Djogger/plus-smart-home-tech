@@ -7,8 +7,5 @@ import ru.yandex.practicum.model.ShoppingCart;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ShoppingCartMapper {
-    ShoppingCart shoppingCartDtoToShoppingCart(ShoppingCartDto shoppingCartDto);
-
-    ShoppingCartDto shoppingCartToShoppingCartDto(ShoppingCart shoppingCart);
-
+    ShoppingCartDto toShoppingCartDto(ShoppingCart shoppingCart);
 }

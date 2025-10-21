@@ -10,9 +10,9 @@ import java.util.List;
 public class ErrorResponse {
     private Throwable cause;
     private List<StackTraceElement> stackTrace;
-    String httpStatus;
-    String userMessage;
-    String message;
-    List<Throwable> suppressed;
-    String localizedMessage;
+    private String httpStatus;
+    private String userMessage;
+    private String message;
+    private List<Throwable> suppressed;
+    private String localizedMessage;
 }

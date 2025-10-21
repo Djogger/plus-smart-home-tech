@@ -3,17 +3,15 @@ package ru.yandex.practicum.dto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Map;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class ShoppingCartDto {
     @NotNull
@@ -21,5 +19,5 @@ public class ShoppingCartDto {
 
     @NotNull
     @NotEmpty
-    Map<@NotNull UUID, @NotNull @Positive Integer> products;
+    private Map<@NotNull UUID, @NotNull @Positive Integer> products;
 }

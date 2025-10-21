@@ -10,7 +10,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,13 +19,12 @@ import java.util.UUID;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "product_id", updatable = false, nullable = false)
     private UUID productId;
 
     @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "description")
     private String description;
 
     @Column(name = "image_src")
@@ -42,9 +42,7 @@ public class Product {
     @Column(name = "product_category")
     private ProductCategory productCategory;
 
-    @Column(name = "price")
     private double price;
 
-    @Column(name = "rating")
     private int rating;
 }

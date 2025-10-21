@@ -1,27 +1,25 @@
-DROP TABLE IF EXISTS shopping_cart_items;
-DROP TABLE IF EXISTS shopping_cart;
-DROP TABLE IF EXISTS warehouse_product;
+drop table if exists shopping_cart,shopping_cart_items,warehouse_product;
 
-CREATE TABLE IF NOT EXISTS warehouse_product (
-    product_id UUID PRIMARY KEY,
-    quantity INTEGER,
-    fragile BOOLEAN,
-    width DOUBLE PRECISION,
-    height DOUBLE PRECISION,
-    depth DOUBLE PRECISION,
-    weight DOUBLE PRECISION
+create table if not exists warehouse_product(
+    product_id uuid primary key,
+    quantity integer,
+    fragile boolean,
+    width double precision,
+    height double precision,
+    depth double precision,
+    weight double precision
 );
 
-CREATE TABLE IF NOT EXISTS bookings (
-    shopping_cart_id UUID PRIMARY KEY,
-    delivery_weight DOUBLE PRECISION NOT NULL,
-    delivery_volume DOUBLE PRECISION NOT NULL,
-    fragile BOOLEAN NOT NULL,
-    order_id UUID
+create table if not exists bookings(
+    shopping_cart_id uuid primary key,
+    delivery_weight double precision not null,
+    delivery_volume double precision not null,
+    fragile boolean not null,
+    order_id uuid
 );
 
-CREATE TABLE IF NOT EXISTS booking_products (
-    shopping_cart_id UUID REFERENCES bookings(shopping_cart_id) ON DELETE CASCADE PRIMARY KEY,
-    product_id UUID NOT NULL,
-    quantity INTEGER
+create table if not exists booking_products(
+    shopping_cart_id uuid references bookings(shopping_cart_id) on delete cascade primary key,
+    product_id uuid not null,
+    quantity integer
 );

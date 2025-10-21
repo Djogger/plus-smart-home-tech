@@ -1,7 +1,8 @@
 package ru.yandex.practicum.controller;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.request.ChangeProductQuantityRequest;
@@ -12,34 +13,37 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/v1/shopping-cart")
+@RequiredArgsConstructor
+@Validated
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @PutMapping
-    public ShoppingCartDto addProduct(@RequestParam @NotBlank String userName, @RequestBody Map<UUID, Integer> request) {
-        return shoppingCartService.addProduct(userName, request);
+    public ShoppingCartDto addProductToShoppingCart(@RequestParam @NotBlank String username, @RequestBody Map<UUID, Integer> request) {
+        return shoppingCartService.addProductToShoppingCart(username, request);
     }
 
     @PostMapping("/remove")
-    public ShoppingCartDto removeFromShoppingCart(@RequestParam @NotBlank String userName, @RequestBody List<UUID> productsId) {
-        return shoppingCartService.removeFromShoppingCart(userName, productsId);
+    public ShoppingCartDto removeFromShoppingCart(@RequestParam @NotBlank String username,
+                                                  @RequestBody List<UUID> productsId) {
+        return shoppingCartService.removeFromShoppingCart(username, productsId);
     }
 
     @PostMapping("/change-quantity")
-    public ShoppingCartDto changeProductQuantity(@RequestParam @NotBlank String userName, @RequestBody ChangeProductQuantityRequest request) {
-        return shoppingCartService.changeProductQuantity(userName, request);
+    public ShoppingCartDto changeProductQuantity(@RequestParam @NotBlank String username,
+                                                 @RequestBody ChangeProductQuantityRequest requestDto) {
+        return shoppingCartService.changeProductQuantity(username, requestDto);
     }
 
     @GetMapping
-    public ShoppingCartDto getShoppingCart(@RequestParam @NotBlank String userName) {
-        return  shoppingCartService.getShoppingCart(userName);
+    public ShoppingCartDto getShoppingCart(@RequestParam @NotBlank String username) {
+        return shoppingCartService.getShoppingCart(username);
     }
 
     @DeleteMapping
-    public void deactivateShoppingCart(@RequestParam @NotBlank String userName) {
-        shoppingCartService.deactivateShoppingCart(userName);
+    public void deactivateCurrentShoppingCart(@RequestParam @NotBlank String username) {
+        shoppingCartService.deactivateCurrentShoppingCart(username);
     }
 
 }

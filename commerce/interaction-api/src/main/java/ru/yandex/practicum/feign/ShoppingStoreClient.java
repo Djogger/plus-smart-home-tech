@@ -24,12 +24,11 @@ public interface ShoppingStoreClient {
     Boolean removeProductFromStore(@RequestBody @NotNull UUID productId);
 
     @PostMapping("/api/v1/shopping-store/quantityState")
-    void setProductQuantityState(@RequestParam UUID productId, @RequestParam QuantityState quantityState);
+    Boolean setProductQuantityState(@RequestParam UUID productId, @RequestParam QuantityState quantityState);
 
     @GetMapping("/api/v1/shopping-store")
     List<ProductDto> getProducts(@RequestParam ProductCategory productCategory, @Valid PageableDto pageableDto);
 
     @GetMapping("/api/v1/shopping-store/{productId}")
     ProductDto getProduct(@PathVariable @NotNull UUID productId);
-
 }

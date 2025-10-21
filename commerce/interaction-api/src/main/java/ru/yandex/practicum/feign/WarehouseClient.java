@@ -7,22 +7,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.dto.AddressDto;
+import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 
 @FeignClient(name = "warehouse")
 public interface WarehouseClient {
+
     @PutMapping("/api/v1/warehouse")
     void newProductInWarehouse(@RequestBody @Valid NewProductInWarehouseRequest requestDto);
 
     @PostMapping("/api/v1/warehouse/check")
-    void checkProductQuantityEnoughForShoppingCart(@RequestBody @Valid ShoppingCartDto shoppingCartDto);
+    BookedProductsDto checkProductQuantityEnoughForShoppingCart(@RequestBody @Valid ShoppingCartDto shoppingCartDto);
 
     @PostMapping("/api/v1/warehouse/add")
     void addProductToWarehouse(@RequestBody @Valid AddProductToWarehouseRequest requestDto);
 
     @GetMapping("/api/v1/warehouse/address")
     AddressDto getAddress();
-
 }

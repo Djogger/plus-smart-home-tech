@@ -16,5 +16,4 @@ public class PageableDto {
     private Integer size;
 
     private List<String> sort;
-
 }

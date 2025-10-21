@@ -10,9 +10,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "shopping_cart")
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @ToString
 public class ShoppingCart {
     @Id
@@ -21,15 +21,15 @@ public class ShoppingCart {
     private UUID shoppingCartId;
 
     @Column(name = "username")
-    String username;
+    private String username;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "cart_state")
-    CartState cartState;
+    private CartState cartState;
 
     @ElementCollection
     @CollectionTable(name = "shopping_cart_items", joinColumns = @JoinColumn(name = "cart_id"))
     @MapKeyColumn(name = "product_id")
     @Column(name = "quantity")
-    Map<UUID, Integer> products;
+    private Map<UUID, Integer> products;
 }
