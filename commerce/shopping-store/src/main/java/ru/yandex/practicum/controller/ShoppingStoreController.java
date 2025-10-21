@@ -2,7 +2,7 @@ package ru.yandex.practicum.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import ru.yandex.practicum.service.ShoppingStoreService;
 import java.util.UUID;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/shopping-store")
 public class ShoppingStoreController {
     private final ShoppingStoreService shoppingStoreService;
