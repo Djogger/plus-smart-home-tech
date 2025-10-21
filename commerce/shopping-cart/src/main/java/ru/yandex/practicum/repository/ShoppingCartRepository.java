@@ -10,8 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, UUID> {
-    ShoppingCart findByUserName(String username);
+    ShoppingCart findByUsername(String username);
 
-    Optional<ShoppingCart> findByUserNameAndCartStateAllIgnoreCase(String userName, CartState cartState);
+    Optional<ShoppingCart> findByUsernameAndCartStateAllIgnoreCase(String username, CartState cartState);
 
 }

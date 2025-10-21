@@ -92,7 +92,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deactivateShoppingCart(String username) {
         checkUsername(username);
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserName(username);
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username);
         shoppingCart.setCartState(CartState.DEACTIVATE);
     }
 
@@ -103,7 +103,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private ShoppingCart getActiveShoppingCartByUserName(String username) {
-        Optional<ShoppingCart> shoppingCartOpt = shoppingCartRepository.findByUserNameAndCartStateAllIgnoreCase(username, CartState.ACTIVE);
+        Optional<ShoppingCart> shoppingCartOpt = shoppingCartRepository.findByUsernameAndCartStateAllIgnoreCase(username, CartState.ACTIVE);
         ShoppingCart shoppingCart;
         if (shoppingCartOpt.isEmpty()) {
             log.info("У пользователя: {} - деактивированная корзина", username);
