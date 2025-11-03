@@ -11,7 +11,11 @@ import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.enums.QuantityState;
 import ru.yandex.practicum.feign.ShoppingStoreClient;
+import ru.yandex.practicum.mapper.BookingMapper;
+import ru.yandex.practicum.model.Booking;
+import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.request.AddProductToWarehouseRequest;
+import ru.yandex.practicum.request.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.request.NewProductInWarehouseRequest;
 import ru.yandex.practicum.model.Address;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
@@ -21,11 +25,9 @@ import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException
 import ru.yandex.practicum.mapper.WarehouseMapper;
 import ru.yandex.practicum.model.Warehouse;
 import ru.yandex.practicum.repository.WarehouseRepository;
+import ru.yandex.practicum.request.ShippedToDeliveryRequest;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,9 +36,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(isolation = Isolation.READ_COMMITTED)
 public class WarehouseServiceImpl implements WarehouseService {
-    private final WarehouseRepository warehouseRepository;
-    private final WarehouseMapper warehouseMapper;
     private final ShoppingStoreClient shoppingStoreClient;
+    private final WarehouseRepository warehouseRepository;
+    private final BookingRepository bookingRepository;
+    private final WarehouseMapper warehouseMapper;
+    private final BookingMapper bookingMapper;
 
     @Override
     public void newProductInWarehouse(NewProductInWarehouseRequest newProductInWarehouseRequest) {
@@ -49,6 +53,22 @@ public class WarehouseServiceImpl implements WarehouseService {
         warehouseRepository.flush();
     }
 
+    @Override
+    public void loadedToDelivery(ShippedToDeliveryRequest deliveryRequest) {
+        Booking booking = bookingRepository.findByOrderId(deliveryRequest.getOrderId()).orElseThrow(
+                () -> new NoSpecifiedProductInWarehouseException("Нет информации о товаре на складе."));
+        booking.setDeliveryId(deliveryRequest.getDeliveryId());
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Long> products) {
+        List<Warehouse> warehousesItems = warehouseRepository.findAllById(products.keySet());
+        for (Warehouse warehouse : warehousesItems) {
+            warehouse.setQuantity(warehouse.getQuantity() + products.get(warehouse.getProductId()));
+        }
+    }
+
+    @Override
     public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto shoppingCartDto) {
         Map<UUID, Integer> products = shoppingCartDto.getProducts();
         Set<UUID> cartProductIds = products.keySet();
@@ -73,6 +93,26 @@ public class WarehouseServiceImpl implements WarehouseService {
         });
 
         return getBookedProducts(warehouseProducts.values(), products);
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest assemblyProductsForOrder) {
+        Booking booking = bookingRepository.findById(assemblyProductsForOrder.getShoppingCartId()).orElseThrow(
+                () -> new RuntimeException(String.format("Shopping cart %s not found", assemblyProductsForOrder.getShoppingCartId()))
+        );
+
+        Map<UUID, Long> productsInBooking = booking.getProducts();
+        List<Warehouse> productsInWarehouse = warehouseRepository.findAllById(productsInBooking.keySet());
+        productsInWarehouse.forEach(warehouse -> {
+            if (warehouse.getQuantity() < productsInBooking.get(warehouse.getProductId())) {
+                throw new ProductInShoppingCartLowQuantityInWarehouseException("Ошибка, товар из корзины не находится в требуемом количестве на складе.");
+            }
+        });
+        for (Warehouse warehouse : productsInWarehouse) {
+            warehouse.setQuantity(warehouse.getQuantity() - productsInBooking.get(warehouse.getProductId()));
+        }
+        booking.setOrderId(assemblyProductsForOrder.getOrderId());
+        return bookingMapper.toBookedProductsDto(booking);
     }
 
     @Override
@@ -126,7 +166,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     private void updateProductQuantityInShoppingStore(Warehouse product) {
         UUID productId = product.getProductId();
         QuantityState quantityState;
-        int quantity = product.getQuantity();
+        long quantity = product.getQuantity();
 
         if (quantity == 0) {
             quantityState = QuantityState.ENDED;
