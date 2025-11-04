@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "shopping_cart")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

@@ -8,10 +8,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "payments")
-@Data
+@Setter
+@Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

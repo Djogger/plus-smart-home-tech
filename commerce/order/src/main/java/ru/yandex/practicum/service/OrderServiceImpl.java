@@ -80,8 +80,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto returnOrder(ProductReturnRequest returnRequest) {
-        Order order = orderRepository.findById(returnRequest.getOrderId())
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(returnRequest.getOrderId());
         warehouseClient.acceptReturn(returnRequest.getProducts());
         order.setState(OrderState.PRODUCT_RETURNED);
 
@@ -90,8 +89,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto payment(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.PAID);
 
         return orderMapper.toOrderDto(order);
@@ -99,8 +97,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto failedPayment(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.PAYMENT_FAILED);
 
         return orderMapper.toOrderDto(order);
@@ -108,8 +105,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto delivery(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.DELIVERED);
 
         return orderMapper.toOrderDto(order);
@@ -117,8 +113,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto failedDelivery(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.DELIVERY_FAILED);
 
         return orderMapper.toOrderDto(order);
@@ -126,8 +121,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto completeOrder(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.COMPLETED);
 
         return orderMapper.toOrderDto(order);
@@ -135,8 +129,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto calculateTotal(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setTotalPrice(paymentClient.getTotalCost(orderMapper.toOrderDto(order)));
 
         return orderMapper.toOrderDto(order);
@@ -144,8 +137,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto calculateDelivery(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setDeliveryPrice(deliveryClient.deliveryCost(orderMapper.toOrderDto(order)));
 
         return orderMapper.toOrderDto(order);
@@ -153,8 +145,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto assembly(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.ASSEMBLED);
 
         return orderMapper.toOrderDto(order);
@@ -162,8 +153,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto failedAssembly(UUID orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoOrderFoundException("Заказ не был найден."));
+        Order order = getOrder(orderId);
         order.setState(OrderState.ASSEMBLY_FAILED);
 
         return orderMapper.toOrderDto(order);
@@ -171,7 +161,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getOrders(String username, Integer page, Integer size) {
-        if (username.isEmpty() || username.isBlank()) {
+        if (username.isBlank()) {
             throw new NotAuthorizedUserException("Имя пользователя не может быть пустым.");
         }
 
@@ -184,6 +174,11 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orders = orderRepository.findByShoppingCartId(shoppingCart.getShoppingCartId(), pageRequest);
 
         return orderMapper.toOrdersDto(orders.getContent());
+    }
+
+    private Order getOrder(UUID orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new NoOrderFoundException("Заказ с id: " + orderId + " не был найден."));
     }
     
 }

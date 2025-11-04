@@ -7,7 +7,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "address")
-@Data
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

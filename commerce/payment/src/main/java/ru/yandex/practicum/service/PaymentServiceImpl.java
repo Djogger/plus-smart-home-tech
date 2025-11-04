@@ -54,8 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentSuccess(UUID uuid) {
-        Payment payment = paymentRepository.findById(uuid).orElseThrow(
-                () -> new NoPaymentFoundException("Оплата заказа не найдена."));
+        Payment payment = getPayment(uuid);
         payment.setStatus(PaymentState.SUCCESS);
         orderClient.payment(payment.getOrderId());
     }
@@ -80,10 +79,14 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void paymentFailed(UUID uuid) {
-        Payment payment = paymentRepository.findById(uuid).orElseThrow(
-                () -> new NoPaymentFoundException("Оплата заказа не найдена."));
+        Payment payment = getPayment(uuid);
         payment.setStatus(PaymentState.FAILED);
         orderClient.failedPayment(payment.getOrderId());
+    }
+
+    private Payment getPayment(UUID uuid) {
+        return paymentRepository.findById(uuid)
+                .orElseThrow(() -> new NoPaymentFoundException("Оплата заказа с id: " + uuid + " не найдена."));
     }
 
     private void checkOrder(OrderDto orderDto) {
